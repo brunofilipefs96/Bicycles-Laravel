@@ -38,7 +38,7 @@
                 <td>
                     @foreach ($person->bicycles as $bicycle)
                         @if($bicycle)
-                            {{  $bicycle->brand }},{{  $bicycle->model }}
+                            {{  $bicycle->brand }} {{  $bicycle->model }},
                         @endif
                     @endforeach
                 </td>

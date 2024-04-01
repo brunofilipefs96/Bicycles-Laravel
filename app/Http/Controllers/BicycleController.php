@@ -45,7 +45,7 @@ class BicycleController extends Controller
             'color' => 'required',
             'price' => 'required'
         ]);
-        $bicycle = new Person();
+        $bicycle = new Bicycle();
         $bicycle->person_id = $request->person_id;
         $bicycle->brand = $request->brand;
         $bicycle->model = $request->model;
@@ -88,8 +88,18 @@ class BicycleController extends Controller
      */
     public function update(Request $request, Bicycle $bicycle)
     {
-        $bicycle->update($request->all());
-
+        $this->validate($request, [
+            'person_id' => 'required',
+            'brand' => 'required',
+            'model' => 'required',
+            'color' => 'required',
+            'price' => 'required'
+        ]);
+        $bicycle->person_id = $request->person_id;
+        $bicycle->brand = $request->brand;
+        $bicycle->model = $request->model;
+        $bicycle->color = $request->color;
+        $bicycle->price = $request->price;
         $bicycle->save();
 
         return redirect('bicycles')->with('status', 'Item edited successfully!');

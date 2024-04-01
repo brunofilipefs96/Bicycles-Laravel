@@ -17,7 +17,6 @@ class BicycleSeeder extends Seeder
         $people=Person::all();
 
         foreach ($people as $person) {
-
             factory(Bicycle::class, 2)->create([
                 'person_id' => $person->id,
             ]);

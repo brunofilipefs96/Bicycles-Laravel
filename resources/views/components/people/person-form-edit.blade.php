@@ -11,7 +11,8 @@
 
                 <div class="form-group">
                     @if ($person->image)
-                        <img class="w-100 img-responsive" src="{{ asset('storage/'.$person->image) }}" alt="" title=""></a>
+                        <img class="w-100 img-responsive" src="{{ asset('storage/'.$person->image) }}" alt=""
+                             title=""></a>
                     @else
                         <p>
                             No Image
@@ -41,13 +42,13 @@
                            autocomplete="name"
                            placeholder="Type your first name"
                            class="form-control
-                        @error('name') is-invalid @enderror"
+                        @error('first_name') is-invalid @enderror"
                            value="{{ $person->first_name }}"
                            required
                            aria-describedby="nameHelp">
                     <small id="nameHelp" class="form-text text-muted">We'll never share your data with anyone
                         else.</small>
-                    @error('name')
+                    @error('first_name')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                         </span>
@@ -62,13 +63,11 @@
                            autocomplete="last_name"
                            placeholder="Type your last name"
                            class="form-control
-                        @error('name') is-invalid @enderror"
+                        @error('last_name') is-invalid @enderror"
                            value="{{ $person->last_name }}"
                            required
                            aria-describedby="nameHelp">
-                    <small id="nameHelp" class="form-text text-muted">We'll never share your data with anyone
-                        else.</small>
-                    @error('name')
+                    @error('last_name')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                         </span>
@@ -83,13 +82,11 @@
                            autocomplete="birth_date"
                            placeholder="Type your Birth Date"
                            class="form-control
-                        @error('name') is-invalid @enderror"
+                        @error('birth_date') is-invalid @enderror"
                            value="{{ $person->birth_date }}"
                            required
                            aria-describedby="nameHelp">
-                    <small id="nameHelp" class="form-text text-muted">We'll never share your data with anyone
-                        else.</small>
-                    @error('name')
+                    @error('birth_date')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                         </span>
@@ -116,12 +113,17 @@
                             @php
                                 $isSelected = $person->bicycles->contains($bicycle);
                             @endphp
-                            <option {{ $isSelected ? 'selected' : '' }} value="{{ $bicycle->id }}">{{ $bicycle->brand }}, {{ $bicycle->model }}, {{ $bicycle->color }}, {{ $bicycle->price }}</option>
+                            <option {{ $isSelected ? 'selected' : '' }} value="{{ $bicycle->id }}">{{ $bicycle->brand }}
+                                , {{ $bicycle->model }}, {{ $bicycle->color }}, {{ $bicycle->price }}</option>
                         @endforeach
                     </select>
-                </div>
-                
-                <button type="submit" class="mt-2 mb-5 btn btn-primary">Submit</button>
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary mt-2 "
+                                onclick="document.getElementById('bicycle_id').selectedIndex = -1;">Clear Selection
+                        </button>
+                    </div>
+
+                    <button type="submit" class="mt-2 mb-5 btn btn-primary">Submit</button>
             </form>
         </div>
         <div class="col-3"></div>

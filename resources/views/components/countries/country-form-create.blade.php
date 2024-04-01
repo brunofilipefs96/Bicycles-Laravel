@@ -28,6 +28,18 @@
                     @enderror
                 </div>
 
+                <div class="form-group">
+                    <label for="person_id">People</label>
+                    <select multiple name="person_id[]" id="person_id" class="form-control">
+                        @foreach ($people as $person)
+                            <option value="{{ $person->id }}">{{ $person->first_name }}, {{ $person->last_name }}, {{ $person->birth_date }}</option>
+                        @endforeach
+                    </select>
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary mt-2 " onclick="document.getElementById('person_id').selectedIndex = -1;">Clear Selection</button>
+                    </div>
+                </div>
+
                 <button type="submit" class="mt-4 mb-5 btn btn-primary">Add</button>
             </form>
         </div>

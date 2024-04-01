@@ -15,7 +15,7 @@ class CreateBicyclesTable extends Migration
     {
         Schema::create('bicycles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('person_id')->constrained();
+            $table->foreignId('person_id')->nullable()->constrained();
             $table->string('brand');
             $table->string('model');
             $table->string('color');

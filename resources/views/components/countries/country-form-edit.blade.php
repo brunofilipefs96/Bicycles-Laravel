@@ -28,7 +28,25 @@
                     @enderror
                 </div>
 
-                <button type="submit" class="mt-2 mb-5 btn btn-primary">Submit</button>
+                <div class="form-group">
+                    <label for="person_id">People</label>
+                    <select multiple name="person_id[]" id="person_id" class="form-control">
+                        @foreach ($people as $person)
+                            @php
+                                $isSelected = in_array($person->id, $country->people->pluck('id')->toArray());
+                            @endphp
+                            <option
+                                value="{{ $person->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $person->first_name }}
+                                , {{ $person->last_name }}, {{ $person->birth_date }}</option>
+                        @endforeach
+                    </select>
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn btn-primary mt-2 "
+                                onclick="document.getElementById('person_id').selectedIndex = -1;">Clear Selection
+                        </button>
+                    </div>
+
+                    <button type="submit" class="mt-2 mb-5 btn btn-primary">Submit</button>
             </form>
         </div>
         <div class="col-3"></div>

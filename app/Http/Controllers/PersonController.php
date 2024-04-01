@@ -8,6 +8,7 @@ use App\Person;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
+
 class PersonController extends Controller
 {
     /**
@@ -48,7 +49,6 @@ class PersonController extends Controller
             'birth_date' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        //dd($request->bicycle_id);
 
         $person = new Person();
 
@@ -58,10 +58,10 @@ class PersonController extends Controller
         $person->birth_date = $request->birth_date;
         $person->save();
 
-        if ($request->bicycle_id) {
-            foreach ($request->bicycle_id as $bikeId) {
+        if ($request->bicycle_id){
+            foreach($request->bicycle_id as $bikeId) {
                 $bike = Bicycle::find($bikeId);
-                if ($bike) {
+                if($bike) {
                     $person->bicycles()->save($bike);
                 }
             }
@@ -74,12 +74,12 @@ class PersonController extends Controller
             // Define Image Name
             $imageName = $person->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
             // Save Image on Storage
-            $path = $request->file('image')->storeAs('images/players/' . $person->id, $imageName, 'public');
+            $path = $request->file('image')->storeAs('images/people/' . $person->id, $imageName, 'public');
             //Save Image Path
             $person->image = $path;
         }
         $person->save();
-        return redirect('people')->with('status', 'Item created successfully!');
+        return redirect('people')->with('status','Item created successfully!');
     }
 
     /**
@@ -115,22 +115,39 @@ class PersonController extends Controller
      */
     public function update(Request $request, Person $person)
     {
-        $person->update($request->all());
+        $this->validate($request, [
+            'country_id' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'birth_date' => 'required',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
 
-        if ($request->file('image')) {
-            Storage::deleteDirectory('public/images/players/' . $person->id);
-            // Get Image File
-            $imagePath = $request->file('image');
-            // Define Image Name
-            $imageName = $person->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
-            // Save Image on Storage
-            $path = $request->file('image')->storeAs('images/players/' . $person->id, $imageName, 'public');
-            //Save Image Path
-            $person->image = $path;
+        // Atualizar os detalhes da pessoa
+        $person->country_id = $request->country_id;
+        $person->first_name = $request->first_name;
+        $person->last_name = $request->last_name;
+        $person->birth_date = $request->birth_date;
+
+        // Salvar as alterações da pessoa
+        $person->save();
+
+        // Obter todas as bicicletas selecionadas
+        $selectedBicycleIds = $request->bicycle_id ?? [];
+
+        // Obter todas as bicicletas associadas à pessoa
+        $currentBicycles = $person->bicycles()->pluck('id')->toArray();
+
+        // Iterar sobre as bicicletas atuais e removê-las se não estiverem na lista de bicicletas selecionadas
+        foreach ($currentBicycles as $bikeId) {
+            if (!in_array($bikeId, $selectedBicycleIds)) {
+                $person->bicycles()->where('id', $bikeId)->delete();
+            }
         }
 
-        if ($request->bicycle_id) {
-            foreach ($request->bicycle_id as $bikeId) {
+        // Iterar sobre as bicicletas selecionadas e adicioná-las se ainda não estiverem associadas à pessoa
+        foreach ($selectedBicycleIds as $bikeId) {
+            if (!in_array($bikeId, $currentBicycles)) {
                 $bike = Bicycle::find($bikeId);
                 if ($bike) {
                     $person->bicycles()->save($bike);
@@ -138,10 +155,24 @@ class PersonController extends Controller
             }
         }
 
-        $person->save();
+        // Lidar com o upload da imagem, se fornecido
+        if ($request->file('image')) {
+            // Excluir o diretório de imagem anterior
+            Storage::deleteDirectory('public/images/people/' . $person->id);
+
+            // Salvar a nova imagem
+            $imagePath = $request->file('image');
+            $imageName = $person->id . '_' . time() . '_' . $imagePath->getClientOriginalName();
+            $path = $request->file('image')->storeAs('images/people/' . $person->id, $imageName, 'public');
+            $person->image = $path;
+            $person->save();
+        }
 
         return redirect('people')->with('status', 'Item edited successfully!');
     }
+
+
+
 
     /**
      * Remove the specified resource from storage.
@@ -151,7 +182,7 @@ class PersonController extends Controller
      */
     public function destroy(Person $person)
     {
-        Storage::deleteDirectory('public/images/players/' . $person->id);
+        Storage::deleteDirectory('public/images/people/' . $person->id);
         //Storage::delete('public/' . $player->image);
         $person->delete();
         return redirect('people')->with('status', 'Item deleted successfully!');
